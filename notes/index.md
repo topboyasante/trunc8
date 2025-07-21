@@ -55,3 +55,6 @@ When you eventually add the PostgreSQL driver with something like:
 Go will automatically update your go.mod file to include that dependency and create a `go.sum` file (like package-lock.json) that locks the exact version.
 
 "Locking the exact version" means ensuring everyone gets the identical code, down to every single line. It stores a cryptographic hash (like a fingerprint) of the exact code you downloaded.
+
+
+Next: [Project Structure](/notes/project-structure.md).
