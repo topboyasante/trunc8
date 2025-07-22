@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -47,10 +49,18 @@ func getEnvWithDefault(key, defaultValue string) string {
 // The caller gets a reference to the original struct
 // No copying happens
 func LoadConfig() (*Config, error) {
+
+	err := godotenv.Load()
+	if err != nil {
+		return nil, err
+	}
+
 	dbURL, err := getRequiredEnv("DATABASE_URL")
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println("Loaded environment variables successfully")
 
 	return &Config{
 		Server: ServerConfig{
