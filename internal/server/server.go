@@ -1,19 +1,17 @@
 package server
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/topboyasante/trunc8/internal/config"
+	"github.com/topboyasante/trunc8/internal/handlers"
 )
 
 func InitServer(cfg *config.Config) *http.Server {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, Trunc8!"))
-		log.Println("Received request on /")
-	})
+	mux.HandleFunc("/shorten", handlers.ShortenURL)
+	mux.HandleFunc("/{code}", handlers.RedirectURL)
 
 	server := &http.Server{
 		Addr:    ":" + cfg.Server.Port,
