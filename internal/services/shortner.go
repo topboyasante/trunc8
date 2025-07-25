@@ -1,12 +1,11 @@
 package services
 
 import (
-	"encoding/base64"
 	"errors"
-	"strconv"
 	"time"
 
 	"github.com/topboyasante/trunc8/internal/models"
+	"github.com/topboyasante/trunc8/internal/utils"
 )
 
 func ShortenURL(originalURL string) (*models.URL, error) {
@@ -16,8 +15,7 @@ func ShortenURL(originalURL string) (*models.URL, error) {
 	}
 
 	id := int(time.Now().UnixMilli())
-	idStr := strconv.Itoa(id)
-	encodedURL := base64.StdEncoding.EncodeToString([]byte(idStr))
+	encodedURL := utils.GenerateURLCode()
 
 	url := &models.URL{
 		ID:          id,

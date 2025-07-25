@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/topboyasante/trunc8/internal/services"
 	"github.com/topboyasante/trunc8/internal/types"
 )
 
@@ -21,7 +21,20 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println(payload.URL)
+		res, err := services.ShortenURL(payload.URL)
+		if err != nil {
+			http.Error(w, "Error shortening url", http.StatusBadRequest)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		jsonRes, err := json.Marshal(res)
+		if err != nil {
+			http.Error(w, "Error encoding response", http.StatusInternalServerError)
+			return
+		}
+		
+		w.Write(jsonRes)
 
 		// Always close the body with defer r.Body.Close() to prevent resource leaks
 		defer r.Body.Close()
