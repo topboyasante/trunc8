@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,7 +10,17 @@ import (
 	"github.com/topboyasante/trunc8/internal/types"
 )
 
-func ShortenURL(w http.ResponseWriter, r *http.Request) {
+type ShortnerHandler struct {
+	service *services.ShortnerService
+}
+
+func NewShortnerHandler(service *services.ShortnerService) *ShortnerHandler {
+	return &ShortnerHandler{
+		service: service,
+	}
+}
+
+func (h *ShortnerHandler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		var payload types.ShortenRequest
@@ -21,8 +32,10 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		res, err := services.ShortenURL(payload.URL)
+		// this expects some context
+		res, err := h.service.ShortenURL(r.Context(),payload.URL)
 		if err != nil {
+			fmt.Print(err)
 			http.Error(w, "Error shortening url", http.StatusBadRequest)
 			return
 		}
@@ -33,7 +46,7 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error encoding response", http.StatusInternalServerError)
 			return
 		}
-		
+
 		w.Write(jsonRes)
 
 		// Always close the body with defer r.Body.Close() to prevent resource leaks
@@ -45,7 +58,7 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RedirectURL(w http.ResponseWriter, r *http.Request) {
+func (h *ShortnerHandler) RedirectURL(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		log.Println("ShortenURL called with POST method")
