@@ -4,16 +4,17 @@ import (
 	"context"
 
 	"github.com/topboyasante/trunc8/internal/config"
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var DBClient *mongo.Client
 
 func ConnectToMongo(cfg *config.Config) error {
+	ctx := context.TODO()
 	dbClientOptions := options.Client().ApplyURI(cfg.Database.Url)
 
-	client, err := mongo.Connect(dbClientOptions)
+	client, err := mongo.Connect(ctx, dbClientOptions)
 
 	if err != nil {
 		return err
