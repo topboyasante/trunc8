@@ -42,11 +42,14 @@ func (s *ShortnerService) ShortenURL(ctx context.Context, originalURL string) (*
 
 	// *url dereferences the pointer, converting it from *models.URL to models.URL
 	// The Create function expects a models.URL value, not a pointer, so we use * to get the actual struct
-	_, err := s.repository.Create(ctx, *url)
+	id, err := s.repository.Create(ctx, *url)
 
 	if err != nil {
 		return nil, err
 	}
+
+	// Set the ID field of the URL struct
+	url.ID = id
 
 	return url, nil
 }
