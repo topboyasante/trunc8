@@ -35,10 +35,10 @@ func (r *ShortenerRepository) Create(ctx context.Context, user models.URL) (stri
 	return id.Hex(), nil
 }
 
-func (r *ShortenerRepository) FindOne(ctx context.Context, id string) (*models.URL, error) {
+func (r *ShortenerRepository) FindOne(ctx context.Context, code string) (*models.URL, error) {
 	var user models.URL
 
-	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+	err := r.collection.FindOne(ctx, bson.M{"code": code}).Decode(&user)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
 	}

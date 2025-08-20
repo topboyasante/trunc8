@@ -53,3 +53,16 @@ func (s *ShortnerService) ShortenURL(ctx context.Context, originalURL string) (*
 
 	return url, nil
 }
+
+func (s *ShortnerService) RedirectURL(ctx context.Context, code string) (string, error) {
+	if code == "" {
+		return "", errors.New("code cannot be empty")
+	}
+
+	url, err := s.repository.FindOne(ctx, code)
+	if err != nil {
+		return "", err
+	}
+
+	return url.OriginalURL, nil
+}

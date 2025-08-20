@@ -33,7 +33,7 @@ func (h *ShortnerHandler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// this expects some context
-		res, err := h.service.ShortenURL(r.Context(),payload.URL)
+		res, err := h.service.ShortenURL(r.Context(), payload.URL)
 		if err != nil {
 			fmt.Print(err)
 			http.Error(w, "Error shortening url", http.StatusBadRequest)
@@ -60,8 +60,20 @@ func (h *ShortnerHandler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 
 func (h *ShortnerHandler) RedirectURL(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodPost:
-		log.Println("ShortenURL called with POST method")
+	case http.MethodGet:
+		shortCode := r.URL.Path[1:] // Remove leading "/" to get "someCODE"
+		if shortCode == "" {
+			http.Error(w, "No short code provided", http.StatusBadRequest)
+			return
+		}
+
+		url, err := h.service.RedirectURL(r.Context(), shortCode)
+		if err != nil {
+			http.Error(w, "Unable to retrieve full url", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, url, http.StatusMovedPermanently)
 	default:
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Not found"))
