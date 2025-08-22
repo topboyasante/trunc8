@@ -49,11 +49,9 @@ func getEnvWithDefault(key, defaultValue string) string {
 // The caller gets a reference to the original struct
 // No copying happens
 func LoadConfig() (*Config, error) {
-
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
-	}
+	// Try to load .env file, but don't fail if it doesn't exist
+	// This allows tests to work without a .env file
+	_ = godotenv.Load()
 
 	dbURL, err := getRequiredEnv("DATABASE_URL")
 	if err != nil {

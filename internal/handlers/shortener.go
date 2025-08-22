@@ -1,20 +1,27 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/topboyasante/trunc8/internal/services"
+	"github.com/topboyasante/trunc8/internal/models"
 	"github.com/topboyasante/trunc8/internal/types"
 )
 
-type ShortnerHandler struct {
-	service *services.ShortnerService
+// ShortenerServiceInterface defines the interface for shortener service operations
+type ShortenerServiceInterface interface {
+	ShortenURL(ctx context.Context, originalURL string) (*models.URL, error)
+	RedirectURL(ctx context.Context, code string) (string, error)
 }
 
-func NewShortnerHandler(service *services.ShortnerService) *ShortnerHandler {
+type ShortnerHandler struct {
+	service ShortenerServiceInterface
+}
+
+func NewShortnerHandler(service ShortenerServiceInterface) *ShortnerHandler {
 	return &ShortnerHandler{
 		service: service,
 	}

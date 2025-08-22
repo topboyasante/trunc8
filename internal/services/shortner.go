@@ -5,19 +5,24 @@ import (
 	"errors"
 
 	"github.com/topboyasante/trunc8/internal/models"
-	"github.com/topboyasante/trunc8/internal/repositories"
 	"github.com/topboyasante/trunc8/internal/utils"
 )
+
+// ShortenerRepositoryInterface defines the interface for shortener repository operations
+type ShortenerRepositoryInterface interface {
+	Create(ctx context.Context, url models.URL) (string, error)
+	FindOne(ctx context.Context, code string) (*models.URL, error)
+}
 
 // This defines a new struct type called ShortnerService (like creating a blueprint).
 // It doesn't initialize an instance - just defines what the struct looks like.
 type ShortnerService struct {
-	repository *repositories.ShortenerRepository // This field holds a pointer to a ShortenerRepository
+	repository ShortenerRepositoryInterface // This field holds a ShortenerRepositoryInterface
 }
 
 // This function creates a new ShortnerService instance and returns a pointer to it.
 // The *ShortnerService return type means it returns a pointer, not the struct value itself.
-func NewShortnerService(repository *repositories.ShortenerRepository) *ShortnerService {
+func NewShortnerService(repository ShortenerRepositoryInterface) *ShortnerService {
 	// &ShortnerService{...} creates a new struct instance and returns its memory address (a pointer to it)
 	return &ShortnerService{
 		repository: repository,
